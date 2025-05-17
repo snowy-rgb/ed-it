@@ -11,6 +11,10 @@
   <input type="file" id="uploader" accept="video/*" />
   <button id="start-btn">프레임으로 자르기</button>
   <div id="frames"></div>
+  <div id="progress-box">
+    <p id="progress-text">진행률: 0%</p>
+    <progress id="progress-bar" value="0" max="100"></progress>
+  </div>
 
   <script src="libs/ffmpeg.min.js"></script>
   <script src="script.js"></script>
