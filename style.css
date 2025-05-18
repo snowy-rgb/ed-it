@@ -20,3 +20,17 @@ video, canvas {
   margin-top: 10px;
   border: 1px solid #ccc;
 }
+
+#log-output {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 20px;
+  background: #222;
+  color: #0f0;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 13px;
+  text-align: left;
+  border-radius: 5px;
+  white-space: pre-wrap;
+}
