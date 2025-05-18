@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Video Background Remover</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>배경 제거기</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>🎥 Video Background Remover</h1>
+  <h1>🎬 동영상 배경 제거기 (MediaPipe)</h1>
   <input type="file" id="uploader" accept="video/*" />
-  <button id="start-btn">프레임으로 자르기</button>
-  <div id="frames"></div>
-  <div id="progress-box">
-    <p id="progress-text">진행률: 0%</p>
-    <progress id="progress-bar" value="0" max="100"></progress>
+  <div id="video-container">
+    <video id="video" controls autoplay muted></video>
+    <canvas id="canvas"></canvas>
   </div>
-
-  <script src="libs/ffmpeg.min.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
