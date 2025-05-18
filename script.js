@@ -1,60 +1,46 @@
-const { createFFmpeg, fetchFile } = FFmpeg;
-const ffmpeg = createFFmpeg({ log: true });
+import { SelfieSegmentation } from 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js';
 
-const progressText = document.getElementById("progress-text");
-const progressBar = document.getElementById("progress-bar");
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-document.getElementById("start-btn").addEventListener("click", async () => {
-  const uploader = document.getElementById("uploader");
-  const framesDiv = document.getElementById("frames");
-  framesDiv.innerHTML = "";
-  progressText.textContent = "진행률: 0%";
-  progressBar.value = 0;
+const selfieSegmentation = new SelfieSegmentation({
+  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+});
 
-  if (uploader.files.length === 0) {
-    alert("동영상을 업로드하세요!");
-    return;
-  }
+selfieSegmentation.setOptions({
+  modelSelection: 1, // 0: 빠름, 1: 더 정확
+});
 
-  try {
-    const videoFile = uploader.files[0];
+selfieSegmentation.onResults((results) => {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
-    if (!ffmpeg.isLoaded()) {
-      console.log("FFmpeg 로딩 중...");
-      await ffmpeg.load();
-      console.log("FFmpeg 로딩 완료!");
-    }
+  // segmentationMask를 먼저 그림 (사람이 흰색, 배경이 검정색)
+  ctx.drawImage(results.segmentationMask, 0, 0, canvas.width, canvas.height);
 
-    ffmpeg.setProgress(({ ratio }) => {
-      const percent = Math.round(ratio * 100);
-      progressText.textContent = `진행률: ${percent}%`;
-      progressBar.value = percent;
-    });
+  // 배경 제거를 위해 사람 부분만 남김
+  ctx.globalCompositeOperation = "source-in";
+  ctx.drawImage(results.image, 0, 0, canvas.width, canvas.height);
 
-    ffmpeg.FS("writeFile", "input.mp4", await fetchFile(videoFile));
+  // 설정 초기화
+  ctx.globalCompositeOperation = "source-over";
+});
 
-    await ffmpeg.run("-i", "input.mp4", "-vf", "fps=2", "frame_%03d.png");
+document.getElementById("uploader").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const frameFiles = ffmpeg.FS("readdir", ".").filter(name => name.endsWith(".png"));
+  video.src = URL.createObjectURL(file);
+  video.play();
 
-    if (frameFiles.length === 0) {
-      alert("프레임 추출에 실패했어요. 다른 동영상으로 시도해보세요.");
-      return;
-    }
-
-    for (let file of frameFiles) {
-      const data = ffmpeg.FS("readFile", file);
-      const url = URL.createObjectURL(new Blob([data.buffer], { type: "image/png" }));
-      const img = document.createElement("img");
-      img.src = url;
-      framesDiv.appendChild(img);
-    }
-
-    progressText.textContent = `진행 완료!`;
-    progressBar.value = 100;
-    alert("✅ 프레임 추출이 완료되었습니다!");
-  } catch (err) {
-    console.error("오류 발생:", err);
-    alert("⚠️ 오류가 발생했어요: " + err.message);
-  }
+  video.onplay = () => {
+    const render = async () => {
+      if (!video.paused && !video.ended) {
+        await selfieSegmentation.send({ image: video });
+        requestAnimationFrame(render);
+      }
+    };
+    render();
+  };
 });
