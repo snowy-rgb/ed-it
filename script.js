@@ -54,3 +54,38 @@ document.getElementById("uploader").addEventListener("change", (e) => {
     render();
   };
 });
+
+// 로그 출력 함수
+function logToScreen(type, message) {
+  const logEl = document.getElementById("log-output");
+  const prefix = type === 'error' ? '❌ ERROR:' :
+                 type === 'warn'  ? '⚠️ WARN:'  : '📗 LOG:';
+  logEl.innerText += `${prefix} ${message}\n`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// 기존 콘솔 함수 보존
+const originalConsole = {
+  log: console.log,
+  warn: console.warn,
+  error: console.error
+};
+
+// console 함수 덮어쓰기
+console.log = (...args) => {
+  originalConsole.log(...args);
+  logToScreen("log", args.join(" "));
+};
+
+console.warn = (...args) => {
+  originalConsole.warn(...args);
+  logToScreen("warn", args.join(" "));
+};
+
+console.error = (...args) => {
+  originalConsole.error(...args);
+  logToScreen("error", args.join(" "));
+};
+
+// 예: 처리 시작 시 메시지
+console.log("💡 배경 제거기 시작됨");
