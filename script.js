@@ -23,9 +23,6 @@ progressText.style.fontSize = "16px";
 progressText.innerText = "진행률: 0%";
 document.body.appendChild(progressText);
 
-const selfieSegmentation = new SelfieSegmentation({
-  locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
-});
 
 selfieSegmentation.setOptions({
   modelSelection: 1,
