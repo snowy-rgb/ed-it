@@ -98,3 +98,65 @@ console.error = (...args) => {
 
 // 예: 처리 시작 시 메시지
 console.log("💡 배경 제거기 시작됨");
+
+// 🟡 1. 캔버스에서 비디오 스트림 가져오기
+const stream = canvas.captureStream();
+const recordedChunks = [];
+let recorder = null;
+
+// 🟡 2. 녹화기 초기화
+function startRecording() {
+  recordedChunks.length = 0;
+  recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
+
+  recorder.ondataavailable = (event) => {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  recorder.onstop = () => {
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+
+    // 다운로드 링크 생성
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = "output_video.webm";
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    console.log("🎬 변환된 영상 다운로드 완료!");
+  };
+
+  recorder.start();
+  console.log("🎥 녹화 시작!");
+}
+
+// 🟡 3. 녹화 종료
+function stopRecording() {
+  if (recorder && recorder.state === "recording") {
+    recorder.stop();
+  }
+}
+
+video.onplay = () => {
+  startRecording(); // ⬅️ 녹화 시작
+
+  const render = async () => {
+    if (!video.paused && !video.ended) {
+      await selfieSegmentation.send({ image: video });
+
+      const progress = Math.floor((video.currentTime / video.duration) * 100);
+      progressText.innerText = `진행률: ${progress}%`;
+
+      requestAnimationFrame(render);
+    } else {
+      progressText.innerText = "✅ 처리 완료!";
+      stopRecording(); // ⬅️ 녹화 종료 및 저장
+    }
+  };
+
+  render();
+};
