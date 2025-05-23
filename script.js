@@ -156,6 +156,7 @@ video.onplay = () => {
   recorder.onstop = () => {
     const blob = new Blob(recordedChunks, { type: "video/webm" });
     const url = URL.createObjectURL(blob);
+    convertWebMtoMP4(blob); // ← 이 부분!
 
     const a = document.createElement("a");
     a.style.display = "none";
@@ -195,5 +196,31 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   link.href = canvas.toDataURL("image/png"); // canvas → PNG URL
   link.click(); // 자동 클릭으로 다운로드
 });
+
+const { createFFmpeg, fetchFile } = FFmpeg;
+const ffmpeg = createFFmpeg({ log: true });
+
+async function convertWebMtoMP4(webmBlob) {
+  if (!ffmpeg.isLoaded()) {
+    await ffmpeg.load();
+  }
+
+  const webmData = await fetchFile(webmBlob);
+  ffmpeg.FS('writeFile', 'input.webm', webmData);
+
+  await ffmpeg.run('-i', 'input.webm', 'output.mp4');
+
+  const mp4Data = ffmpeg.FS('readFile', 'output.mp4');
+  const mp4Blob = new Blob([mp4Data.buffer], { type: 'video/mp4' });
+  const mp4Url = URL.createObjectURL(mp4Blob);
+
+  // 다운로드 링크 자동 생성
+  const a = document.createElement('a');
+  a.href = mp4Url;
+  a.download = 'converted_video.mp4';
+  a.click();
+
+  console.log('🎥 MP4 변환 완료 및 다운로드!');
+}
 
 
