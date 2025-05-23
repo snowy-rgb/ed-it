@@ -197,7 +197,10 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   link.click(); // 자동 클릭으로 다운로드
 });
 
-import { createFFmpeg, fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
+import FFmpeg from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
+
+const { createFFmpeg, fetchFile } = FFmpeg;
+
 const ffmpeg = createFFmpeg({ log: true });
 
 async function convertWebMtoMP4(webmBlob) {
