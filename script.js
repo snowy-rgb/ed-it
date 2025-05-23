@@ -196,10 +196,10 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   link.href = canvas.toDataURL("image/png"); // canvas → PNG URL
   link.click(); // 자동 클릭으로 다운로드
 });
-
-import FFmpeg from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
-
-const { createFFmpeg, fetchFile } = FFmpeg;
+//
+//
+//
+import { createFFmpeg, fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
 
 const ffmpeg = createFFmpeg({ log: true });
 
