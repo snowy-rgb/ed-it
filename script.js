@@ -199,7 +199,9 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
 //
 //
 //
-import { createFFmpeg, fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
+//import { createFFmpeg, fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
+
+const { createFFmpeg, fetchFile } = FFmpeg; // ✅ 전역 객체로부터 받아옴
 
 const ffmpeg = createFFmpeg({ log: true });
 
