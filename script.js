@@ -188,3 +188,12 @@ video.onplay = () => {
   render();
 };
 
+console.log('loaded')
+document.getElementById("downloadBtn").addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.download = "canvas_snapshot.png"; // 저장될 파일명
+  link.href = canvas.toDataURL("image/png"); // canvas → PNG URL
+  link.click(); // 자동 클릭으로 다운로드
+});
+
+
