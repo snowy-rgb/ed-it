@@ -1,4 +1,16 @@
-import { SelfieSegmentation } from 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js';
+  const selfieSegmentation = new SelfieSegmentation.SelfieSegmentation({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+    }
+  });
+
+  selfieSegmentation.setOptions({
+    modelSelection: 1,
+  });
+
+  selfieSegmentation.onResults((results) => {
+    console.log(results);
+  });
 
 const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
