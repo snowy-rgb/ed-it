@@ -199,7 +199,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
 //
 //
 //
-import { createFFmpeg, fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
+import { fetchFile } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.2/dist/esm/index.js';
 
 const ffmpeg = createFFmpeg({ log: true });
 
